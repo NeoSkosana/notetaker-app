@@ -1,0 +1,8 @@
+Errors/
+__pycache__/
+*.pyc
+instance/notes.db
+venv/
+.env
+.mypy_cache/
+.migrations/
