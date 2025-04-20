@@ -145,16 +145,41 @@
             <h1>Note Taker App</h1>
             {% if selected_note %}
                 <form method="post" action="{{ url_for('edit_note', note_id=selected_note.id) }}">
-                    <input type="text" class="lesson-title-input" name="title" value="{{ selected_note.title }}" required>
-                    <input type="text" class="lesson-section-input" name="section" value="{{ selected_note.section.name if selected_note.section else '' }}" list="section-list-edit" placeholder="Section (e.g. Module 1)" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
+                    <div style="position:relative;">
+                        <input type="text" class="lesson-title-input" name="title" value="{{ selected_note.title }}" required id="title-field">
+                        <button type="button" class="tts-btn" aria-label="Dictate title" onclick="startDictation('title-field', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
+                    <div style="position:relative;">
+                        <input type="text" class="lesson-section-input" name="section" value="{{ selected_note.section.name if selected_note.section else '' }}" list="section-list-edit" placeholder="Section (e.g. Module 1)" id="section-field">
+                        <button type="button" class="tts-btn" aria-label="Dictate section" onclick="startDictation('section-field', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
                     <datalist id="section-list-edit">
                         {% for section in sections %}
                             <option value="{{ section.name }}">
                         {% endfor %}
                     </datalist>
-                    <textarea class="lesson-notes-input" name="notes" rows="8" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">{{ selected_note.notes }}</textarea>
-                    <input type="text" class="lesson-keywords-input" name="keywords" value="{{ selected_note.keywords }}" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
-                    <textarea class="lesson-summary-input" name="summary" rows="3" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">{{ selected_note.summary }}</textarea>
+                    <div style="position:relative;">
+                        <textarea class="lesson-notes-input" name="notes" rows="8" id="notes-field">{{ selected_note.notes }}</textarea>
+                        <button type="button" class="tts-btn" aria-label="Dictate notes" onclick="startDictation('notes-field', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
+                    <div style="position:relative;">
+                        <input type="text" class="lesson-keywords-input" name="keywords" value="{{ selected_note.keywords }}" id="keywords-field">
+                        <button type="button" class="tts-btn" aria-label="Dictate keywords" onclick="startDictation('keywords-field', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
+                    <div style="position:relative;">
+                        <textarea class="lesson-summary-input" name="summary" rows="3" id="summary-field">{{ selected_note.summary }}</textarea>
+                        <button type="button" class="tts-btn" aria-label="Dictate summary" onclick="startDictation('summary-field', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
                     <button type="submit" style="margin-top:24px;padding:12px 32px;font-size:1.1em;background:#1e90ff;color:#fff;border:none;border-radius:4px;cursor:pointer;">Save Changes</button>
                 </form>
                 <form method="post" action="{{ url_for('delete_note', note_id=selected_note.id) }}" onsubmit="return confirm('Are you sure you want to delete this note?');">
@@ -162,16 +187,41 @@
                 </form>
             {% else %}
                 <form id="note-form" method="post">
-                    <input type="text" class="lesson-title-input" name="title" placeholder="Lesson Title..." required>
-                    <input type="text" class="lesson-section-input" name="section" list="section-list-create" placeholder="Section (e.g. Module 1)" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
+                    <div style="position:relative;">
+                        <input type="text" class="lesson-title-input" name="title" placeholder="Lesson Title..." required id="title-field-create">
+                        <button type="button" class="tts-btn" aria-label="Dictate title" onclick="startDictation('title-field-create', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
+                    <div style="position:relative;">
+                        <input type="text" class="lesson-section-input" name="section" list="section-list-create" placeholder="Section (e.g. Module 1)" id="section-field-create">
+                        <button type="button" class="tts-btn" aria-label="Dictate section" onclick="startDictation('section-field-create', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
                     <datalist id="section-list-create">
                         {% for section in sections %}
                             <option value="{{ section.name }}">
                         {% endfor %}
                     </datalist>
-                    <textarea class="lesson-notes-input" name="notes" placeholder="Lesson Notes..." rows="8" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;"></textarea>
-                    <input type="text" class="lesson-keywords-input" name="keywords" placeholder="Keywords (comma separated)..." style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
-                    <textarea class="lesson-summary-input" name="summary" placeholder="Lesson Summary..." rows="3" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;"></textarea>
+                    <div style="position:relative;">
+                        <textarea class="lesson-notes-input" name="notes" placeholder="Lesson Notes..." rows="8" id="notes-field-create"></textarea>
+                        <button type="button" class="tts-btn" aria-label="Dictate notes" onclick="startDictation('notes-field-create', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
+                    <div style="position:relative;">
+                        <input type="text" class="lesson-keywords-input" name="keywords" placeholder="Keywords (comma separated)..." id="keywords-field-create">
+                        <button type="button" class="tts-btn" aria-label="Dictate keywords" onclick="startDictation('keywords-field-create', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
+                    <div style="position:relative;">
+                        <textarea class="lesson-summary-input" name="summary" placeholder="Lesson Summary..." rows="3" id="summary-field-create"></textarea>
+                        <button type="button" class="tts-btn" aria-label="Dictate summary" onclick="startDictation('summary-field-create', this)" style="position:absolute;right:8px;top:24px;background:none;border:none;cursor:pointer;">
+                            <svg width="20" height="20" fill="none" stroke="#1e90ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 18v3m-6-3a6 6 0 0 0 12 0V9a6 6 0 0 0-12 0v9z"/><line x1="19" y1="10" x2="19" y2="14"/><line x1="5" y1="10" x2="5" y2="14"/></svg>
+                        </button>
+                    </div>
                     <button type="submit" style="margin-top:24px;padding:12px 32px;font-size:1.1em;background:#222e3c;color:#fff;border:none;border-radius:4px;cursor:pointer;">Create Note</button>
                 </form>
             {% endif %}
@@ -212,6 +262,65 @@
                 if (arrow) arrow.innerHTML = getChevronSVG('down');
             {% endfor %}
         });
+
+        // Text-to-Speech (Speech Recognition) logic
+        let recognition;
+        let recognizing = false;
+        let activeField = null;
+        let activeBtn = null;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = function() {
+                recognizing = true;
+                if (activeBtn) activeBtn.style.background = '#e3f2fd';
+            };
+            recognition.onend = function() {
+                recognizing = false;
+                if (activeBtn) activeBtn.style.background = 'none';
+            };
+            recognition.onerror = function(event) {
+                recognizing = false;
+                if (activeBtn) activeBtn.style.background = 'none';
+                alert('Speech recognition error: ' + event.error);
+            };
+            recognition.onresult = function(event) {
+                if (activeField) {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    let field = document.getElementById(activeField);
+                    if (field) {
+                        if (field.tagName === 'TEXTAREA') {
+                            field.value += (field.value ? ' ' : '') + transcript;
+                        } else {
+                            field.value += (field.value ? ' ' : '') + transcript;
+                        }
+                        field.focus();
+                    }
+                }
+            };
+        }
+
+        function startDictation(fieldId, btn) {
+            if (!recognition) {
+                alert('Speech recognition is not supported in this browser.');
+                return;
+            }
+            if (recognizing) {
+                recognition.stop();
+                return;
+            }
+            activeField = fieldId;
+            activeBtn = btn;
+            recognition.start();
+        }
     </script>
 </body>
 </html>
