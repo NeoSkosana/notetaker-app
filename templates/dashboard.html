@@ -96,13 +96,22 @@
             <div class="notes-list">
                 {% for section, notes in notes_by_section.items() %}
                     <div style="margin-bottom: 10px;">
-                        <div style="display:flex;align-items:center;justify-content:space-between;font-weight:bold;padding:8px 20px 4px 20px;color:#1e90ff;">
-                            <span id="section-name-{{ section.id }}">{{ section.name }}</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;font-weight:500;padding:8px 20px 4px 20px;color:#fff;cursor:pointer;" onclick="toggleSection('{{ section.id }}')">
+                            <span id="section-name-{{ section.id }}" title="{{ section.name }}" style="display:inline-block;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;color:#fff;font-weight:500;">
+                                {{ section.name[:15] }}{% if section.name|length > 15 %}...{% endif %}
+                            </span>
+                            <span id="section-arrow-{{ section.id }}" style="margin-left:2px;padding:0;vertical-align:middle;display:inline-block;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;"><polyline points="6 9 12 15 18 9"/></svg>
+                            </span>
                             {% if section.name != 'Uncategorized' %}
-                                <span>
-                                    <button onclick="showEditSection({{ section.id }}, {{ section.name|tojson }})" aria-label="Edit section name" style="background:none;border:none;color:#1e90ff;cursor:pointer;font-size:1em;">✏️</button>
+                                <span style="display:flex;gap:8px;margin-left:8px;">
+                                    <button onclick="event.stopPropagation();showEditSection({{ section.id }}, {{ section.name|tojson }})" aria-label="Edit section name" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1em;padding:0;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                    </button>
                                     <form method="post" action="{{ url_for('delete_section', section_id=section.id) }}" style="display:inline;" onsubmit="return confirm('Delete section and move its notes to Uncategorized?');">
-                                        <button type="submit" aria-label="Delete section" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1em;">🗑️</button>
+                                        <button type="submit" aria-label="Delete section" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1em;padding:0;">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                        </button>
                                     </form>
                                 </span>
                             {% endif %}
@@ -112,10 +121,15 @@
                             <button type="submit" style="padding:4px 12px;font-size:1em;background:#1e90ff;color:#fff;border:none;border-radius:4px;">Save</button>
                             <button type="button" onclick="hideEditSection({{ section.id }})" style="padding:4px 12px;font-size:1em;background:#ccc;color:#222;border:none;border-radius:4px;">Cancel</button>
                         </form>
-                        <ul>
+                        <ul id="section-notes-{{ section.id }}">
                         {% for note in notes %}
                             <li {% if selected_note and note.id == selected_note.id %}style="background:#334155;"{% endif %}>
-                                <a href="{{ url_for('view_note', note_id=note.id) }}" style="color:inherit;text-decoration:none;display:block;">{{ note.title }}</a>
+                                <div style="display:flex;align-items:center;justify-content:space-between;">
+                                    <a href="{{ url_for('view_note', note_id=note.id) }}" style="color:inherit;text-decoration:none;display:block;flex:1;">{{ note.title }}</a>
+                                    <form method="post" action="{{ url_for('delete_note', note_id=note.id) }}" style="display:inline;margin-left:8px;" onsubmit="return confirm('Delete this note?');">
+                                        <button type="submit" aria-label="Delete note" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1em;">🗑️</button>
+                                    </form>
+                                </div>
                             </li>
                         {% else %}
                             <li style="color:#aaa;">No notes yet.</li>
@@ -172,6 +186,32 @@
             document.getElementById('section-name-' + sectionId).style.display = 'inline';
             document.getElementById('edit-section-form-' + sectionId).style.display = 'none';
         }
+        function getChevronSVG(direction) {
+            if (direction === 'down') {
+                return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;"><polyline points="6 9 12 15 18 9"/></svg>';
+            } else {
+                return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;"><polyline points="9 6 15 12 9 18"/></svg>';
+            }
+        }
+        function toggleSection(sectionId) {
+            var notesList = document.getElementById('section-notes-' + sectionId);
+            var arrow = document.getElementById('section-arrow-' + sectionId);
+            if (notesList.style.display === 'none') {
+                notesList.style.display = '';
+                if (arrow) arrow.innerHTML = getChevronSVG('down');
+            } else {
+                notesList.style.display = 'none';
+                if (arrow) arrow.innerHTML = getChevronSVG('right');
+            }
+        }
+        // By default, all sections are expanded and show the down chevron
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for section, notes in notes_by_section.items() %}
+                document.getElementById('section-notes-{{ section.id }}').style.display = '';
+                var arrow = document.getElementById('section-arrow-{{ section.id }}');
+                if (arrow) arrow.innerHTML = getChevronSVG('down');
+            {% endfor %}
+        });
     </script>
 </body>
 </html>
