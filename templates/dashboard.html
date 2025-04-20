@@ -62,6 +62,30 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        .lesson-section-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .lesson-keywords-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .lesson-notes-input, .lesson-summary-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -76,9 +100,9 @@
                             <span id="section-name-{{ section.id }}">{{ section.name }}</span>
                             {% if section.name != 'Uncategorized' %}
                                 <span>
-                                    <button onclick="showEditSection({{ section.id }}, {{ section.name|tojson }})" style="background:none;border:none;color:#1e90ff;cursor:pointer;font-size:1em;">✏️</button>
+                                    <button onclick="showEditSection({{ section.id }}, {{ section.name|tojson }})" aria-label="Edit section name" style="background:none;border:none;color:#1e90ff;cursor:pointer;font-size:1em;">✏️</button>
                                     <form method="post" action="{{ url_for('delete_section', section_id=section.id) }}" style="display:inline;" onsubmit="return confirm('Delete section and move its notes to Uncategorized?');">
-                                        <button type="submit" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1em;">🗑️</button>
+                                        <button type="submit" aria-label="Delete section" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1em;">🗑️</button>
                                     </form>
                                 </span>
                             {% endif %}
@@ -108,8 +132,8 @@
             {% if selected_note %}
                 <form method="post" action="{{ url_for('edit_note', note_id=selected_note.id) }}">
                     <input type="text" class="lesson-title-input" name="title" value="{{ selected_note.title }}" required>
-                    <input type="text" class="lesson-section-input" name="section" value="{{ selected_note.section.name if selected_note.section else '' }}" list="section-list" placeholder="Section (e.g. Module 1)" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
-                    <datalist id="section-list">
+                    <input type="text" class="lesson-section-input" name="section" value="{{ selected_note.section.name if selected_note.section else '' }}" list="section-list-edit" placeholder="Section (e.g. Module 1)" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
+                    <datalist id="section-list-edit">
                         {% for section in sections %}
                             <option value="{{ section.name }}">
                         {% endfor %}
@@ -125,8 +149,8 @@
             {% else %}
                 <form id="note-form" method="post">
                     <input type="text" class="lesson-title-input" name="title" placeholder="Lesson Title..." required>
-                    <input type="text" class="lesson-section-input" name="section" list="section-list" placeholder="Section (e.g. Module 1)" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
-                    <datalist id="section-list">
+                    <input type="text" class="lesson-section-input" name="section" list="section-list-create" placeholder="Section (e.g. Module 1)" style="width:100%;margin-top:20px;padding:12px;font-size:1.1em;border:1px solid #ccc;border-radius:4px;">
+                    <datalist id="section-list-create">
                         {% for section in sections %}
                             <option value="{{ section.name }}">
                         {% endfor %}
